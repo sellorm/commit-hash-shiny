@@ -55,7 +55,7 @@ server <- function(input, output) {
       apiKey <- Sys.getenv("CONNECT_API_KEY")
       bundle <- GET(api_url,
                 add_headers(Authorization = paste("Key", apiKey)))
-      git_output <- content(bundle, "parsed")[[1]]$metadata$commit$source_commit
+      git_output <- content(bundle, "parsed")[[1]]$metadata$source_commit
       github_url <- paste0("https://github.com/sellorm/commit-hash-shiny/commit/",
                            git_output)
       a(href=github_url, git_output)
