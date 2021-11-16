@@ -46,10 +46,7 @@ server <- function(input, output) {
         hist(x, breaks = bins, col = 'darkgray', border = 'white')
     })
     output$gitRev <- renderUI({
-      git_output <- system2(command = "git",
-                            args = c("rev-parse", "--short", "HEAD"),
-                            stdout = TRUE,
-                            stderr = FALSE)
+      git_output <- gert::git_commit_id()
       github_url <- paste0("https://github.com/sellorm/commit-hash-shiny/commit/",
                            git_output)
       a(href=github_url, git_output)
