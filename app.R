@@ -14,7 +14,7 @@ library(httr)
 ui <- fluidPage(
 
     # Application title
-    titlePanel("Old Faithful Geyser Data"),
+    titlePanel("Old Faithful Geyser Data (with Git commit hash)"),
 
     # Sidebar with a slider input for number of bins
     sidebarLayout(
