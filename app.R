@@ -47,7 +47,7 @@ server <- function(input, output) {
         hist(x, breaks = bins, col = 'darkgray', border = 'white')
     })
     output$gitRev <- renderUI({
-      # git_output <- gert::git_commit_id()
+      # Use the Connect API to obtain the source commit hash for the app
       api_url <- paste0(Sys.getenv("CONNECT_SERVER"),
                         "__api__/v1/content/",
                         Sys.getenv("CONNECT_CONTENT_GUID"),
