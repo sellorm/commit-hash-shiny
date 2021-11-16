@@ -8,6 +8,7 @@
 #
 
 library(shiny)
+library(httr)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
@@ -46,7 +47,15 @@ server <- function(input, output) {
         hist(x, breaks = bins, col = 'darkgray', border = 'white')
     })
     output$gitRev <- renderUI({
-      git_output <- gert::git_commit_id()
+      # git_output <- gert::git_commit_id()
+      api_url <- paste0(Sys.getenv("CONNECT_SERVER"),
+                        "__api__/v1/content/",
+                        Sys.getenv("CONNECT_CONTENT_GUID"),
+                        "/bundles")
+      apiKey <- Sys.getenv("CONNECT_API_KEY")
+      bundle <- GET(api_url,
+                add_headers(Authorization = paste("Key", apiKey)))
+      git_output <- content(bundle, "parsed")$metadata$commit$source_commit
       github_url <- paste0("https://github.com/sellorm/commit-hash-shiny/commit/",
                            git_output)
       a(href=github_url, git_output)
