@@ -58,7 +58,7 @@ server <- function(input, output) {
       git_output <- content(bundle, "parsed")[[1]]$metadata$source_commit
       github_url <- paste0("https://github.com/sellorm/commit-hash-shiny/commit/",
                            git_output)
-      a(href=github_url, git_output)
+      a(href=github_url, substr(git_output, 1, 7))
     })
 }
 
