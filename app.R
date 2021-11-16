@@ -23,7 +23,8 @@ ui <- fluidPage(
                         min = 1,
                         max = 50,
                         value = 30),
-            shiny::textOutput("gitRev")
+            "Git commit hash:",
+            htmlOutput("gitRev", inline = TRUE)
         ),
 
         # Show a plot of the generated distribution
@@ -44,12 +45,14 @@ server <- function(input, output) {
         # draw the histogram with the specified number of bins
         hist(x, breaks = bins, col = 'darkgray', border = 'white')
     })
-    output$gitRev <- renderText({
+    output$gitRev <- renderUI({
       git_output <- system2(command = "git",
                             args = c("rev-parse", "--short", "HEAD"),
                             stdout = TRUE,
                             stderr = FALSE)
-      paste0("Git commit hash: ", git_output)
+      github_url <- paste0("https://github.com/sellorm/commit-hash-shiny/commit/",
+                           git_output)
+      a(href=github_url, git_output)
     })
 }
 
