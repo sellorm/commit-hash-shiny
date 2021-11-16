@@ -95,10 +95,10 @@
     },
     "glue": {
       "Package": "glue",
-      "Version": "1.5.0",
+      "Version": "1.4.2",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "5ccb956a6d09b4ca448094582f8c7571"
+      "Hash": "6efd734b14c6471cfe443345f3e35e29"
     },
     "htmltools": {
       "Package": "htmltools",
