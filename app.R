@@ -10,11 +10,32 @@
 library(shiny)
 library(httr)
 
+# Use the Connect API to obtain the source commit hash for the app
+api_url <- paste0(Sys.getenv("CONNECT_SERVER"),
+                  "__api__/v1/content/",
+                  Sys.getenv("CONNECT_CONTENT_GUID"),
+                  "/bundles")
+apiKey <- Sys.getenv("CONNECT_API_KEY")
+bundle <- GET(api_url,
+              add_headers(Authorization = paste("Key", apiKey)))
+
+
+api_info <- list(
+  git_output = content(bundle, "parsed")[[1]]$metadata$source_commit,
+  github_url = paste0("https://github.com/sellorm/commit-hash-shiny/commit/",
+                      content(bundle, "parsed")[[1]]$metadata$source_commit),
+  bundle_id = content(bundle, "parsed")[[1]]$id,
+  bundle_url = paste0(Sys.getenv("CONNECT_SERVER"),
+                      "/__api__/v1/experimental/bundles/",
+                      content(bundle, "parsed")[[1]]$id,
+                      "/download")
+)
+
 # Define UI for application that draws a histogram
 ui <- fluidPage(
 
     # Application title
-    titlePanel("Old Faithful Geyser Data (with Git commit hash)"),
+    titlePanel("Geyser Data (with Git commit hash and Bundle ID)"),
 
     # Sidebar with a slider input for number of bins
     sidebarLayout(
@@ -25,8 +46,11 @@ ui <- fluidPage(
                         max = 50,
                         value = 30),
             "Git commit hash:",
-            htmlOutput("gitRev", inline = TRUE)
-        ),
+            a(href=api_info$github_url, substr(api_info$git_output, 1, 7)),
+            br(),
+            "Bundle ID:",
+            a(href=api_info$bundle_url, api_info$bundle_id),
+            ),
 
         # Show a plot of the generated distribution
         mainPanel(
@@ -46,20 +70,7 @@ server <- function(input, output) {
         # draw the histogram with the specified number of bins
         hist(x, breaks = bins, col = 'darkgray', border = 'white')
     })
-    output$gitRev <- renderUI({
-      # Use the Connect API to obtain the source commit hash for the app
-      api_url <- paste0(Sys.getenv("CONNECT_SERVER"),
-                        "__api__/v1/content/",
-                        Sys.getenv("CONNECT_CONTENT_GUID"),
-                        "/bundles")
-      apiKey <- Sys.getenv("CONNECT_API_KEY")
-      bundle <- GET(api_url,
-                add_headers(Authorization = paste("Key", apiKey)))
-      git_output <- content(bundle, "parsed")[[1]]$metadata$source_commit
-      github_url <- paste0("https://github.com/sellorm/commit-hash-shiny/commit/",
-                           git_output)
-      a(href=github_url, substr(git_output, 1, 7))
-    })
+    output
 }
 
 # Run the application
